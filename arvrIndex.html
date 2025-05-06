@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive dashboard for understanding Chronic Kidney Disease (CKD): causes, risk factors, prevention, and prevalence across age groups." />
+  <title>CKD Educational Dashboard</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+    }
+    .header {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 25px 10px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      padding: 25px;
+    }
+    .section {
+      background-color: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      min-height: 500px;
+    }
+    .section h2 {
+      font-size: 24px;
+      color: #34495e;
+      margin-bottom: 15px;
+    }
+    .chart-container {
+      height: 450px;
+    }
+    .buttons {
+      text-align: center;
+      margin: 25px 0;
+    }
+    .buttons button {
+      margin: 8px;
+      padding: 12px 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      background-color: #2980b9;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .buttons button:hover {
+      background-color: #1f618d;
+      transform: translateY(-2px);
+    }
+    .info-box {
+      max-width: 1200px;
+      margin: 25px auto;
+      padding: 20px;
+      background-color: #ecf0f1;
+      border-left: 5px solid #2980b9;
+      display: none;
+      border-radius: 8px;
+    }
+    .footer {
+      text-align: center;
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    table.comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .comparison-table th, .comparison-table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    .comparison-table th {
+      background-color: #3498db;
+      color: white;
+    }
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .section {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Chronic Kidney Disease (CKD) Educational Dashboard</h1>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="section">
+        <h2>Leading Causes of CKD</h2>
+        <div class="chart-container" id="pieChart"></div>
+      </section>
+      <section class="section">
+        <h2>CKD Risk Factors (%)</h2>
+        <div class="chart-container" id="barChart"></div>
+      </section>
+      <section class="section">
+        <h2>CKD Stage-wise Prevalence by Age</h2>
+        <div class="chart-container" id="lineChart"></div>
+      </section>
+      <section class="section">
+        <h2>CKD by Age Group</h2>
+        <div class="chart-container" id="ageChart"></div>
+      </section>
+    </div>
+
+    <div class="buttons">
+      <button onclick="showInfo('ckdDetected')">What to do if CKD is Detected</button>
+      <button onclick="showInfo('ckdNotDetected')">Guidance if CKD is Not Detected</button>
+      <button onclick="showInfo('prevention')">CKD Prevention Guidelines</button>
+      <button onclick="showInfo('comparison')">Compare: Healthy vs CKD Patient</button>
+    </div>
+
+    <div class="info-box" id="infoBox" aria-live="polite"></div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Chronic Kidney Disease Educational Dashboard</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const pastelColors = ['#ADD8E6', '#FFB6C1', '#D8BFD8', '#98FB98']; // Light blue, pink, purple, green
+      const barColors = ['#9b59b6', '#34495e', '#e67e22', '#27ae60', '#16a085'];
+      const agePieColors = ['#e74c3c', '#2980b9', '#f1c40f', '#2ecc71', '#9b59b6'];
+
+      Plotly.newPlot('pieChart', [{
+        values: [40, 30, 20, 10],
+        labels: ['Diabetes', 'Hypertension', 'Glomerulonephritis', 'Others'],
+        type: 'pie',
+        marker: { colors: pastelColors },
+        textinfo: 'label+percent',
+        hoverinfo: 'label+percent',
+      }], {
+        title: { text: 'Leading Causes of CKD', font: { size: 22 }, x: 0.5 },
+        showlegend: false
+      });
+
+      Plotly.newPlot('barChart', [{
+        x: ['High BP', 'Diabetes', 'Obesity', 'Family History', 'Smoking'],
+        y: [45, 40, 30, 25, 20],
+        type: 'bar',
+        marker: { color: barColors },
+        text: ['45%', '40%', '30%', '25%', '20%'],
+        textposition: 'auto'
+      }], {
+        title: 'Risk Factors Contributing to CKD',
+        xaxis: { title: 'Risk Factors' },
+        yaxis: { title: 'Risk (%)', range: [0, 50] }
+      });
+
+      const ageGroups = ['<20', '20-39', '40-59', '60-79', '80+'];
+      Plotly.newPlot('lineChart', [
+        {
+          x: ageGroups, y: [2, 15, 35, 50, 30], name: 'Stage 1',
+          mode: 'lines+markers', line: { color: '#2980b9', width: 3 }
+        },
+        {
+          x: ageGroups, y: [1, 10, 25, 40, 25], name: 'Stage 2',
+          mode: 'lines+markers', line: { color: '#e74c3c', width: 3 }
+        },
+        {
+          x: ageGroups, y: [0.5, 5, 15, 25, 20], name: 'Stage 3',
+          mode: 'lines+markers', line: { color: '#f1c40f', width: 3 }
+        },
+        {
+          x: ageGroups, y: [0.2, 2, 8, 15, 12], name: 'Stage 4',
+          mode: 'lines+markers', line: { color: '#2ecc71', width: 3 }
+        },
+        {
+          x: ageGroups, y: [0.1, 1, 4, 8, 10], name: 'Stage 5',
+          mode: 'lines+markers', line: { color: '#9b59b6', width: 3 }
+        }
+      ], {
+        title: 'CKD Stage-wise Prevalence by Age Group',
+        xaxis: { title: 'Age Groups', type: 'category' },
+        yaxis: { title: 'Prevalence (%)', range: [0, 55] },
+        legend: { orientation: 'h', y: -0.3 },
+        margin: { t: 40, b: 100 }
+      });
+
+      Plotly.newPlot('ageChart', [{
+        labels: ['<20', '20-39', '40-59', '60-79', '80+'],
+        values: [5, 20, 35, 30, 10],
+        type: 'pie',
+        marker: { colors: agePieColors },
+        textinfo: 'percent',
+        hoverinfo: 'label+percent'
+      }], {
+        title: 'CKD Prevalence by Age Group'
+      });
+    });
+
+    function showInfo(type) {
+      const infoBox = document.getElementById('infoBox');
+      let content = "";
+
+      switch (type) {
+        case 'ckdDetected':
+          content = `
+            <h3>What to Do if CKD is Detected</h3>
+            <ul>
+              <li>Consult a nephrologist for diagnosis and treatment.</li>
+              <li>Manage blood sugar and blood pressure strictly.</li>
+              <li>Follow a kidney-friendly diet and reduce salt intake.</li>
+              <li>Avoid NSAIDs and nephrotoxic drugs.</li>
+              <li>Schedule regular kidney function tests.</li>
+            </ul>`;
+          break;
+        case 'ckdNotDetected':
+          content = `
+            <h3>Guidance if CKD is Not Detected</h3>
+            <ul>
+              <li>Maintain a healthy diet and weight.</li>
+              <li>Exercise regularly and stay hydrated.</li>
+              <li>Monitor blood pressure and sugar levels.</li>
+              <li>Avoid smoking and limit alcohol intake.</li>
+            </ul>`;
+          break;
+        case 'prevention':
+          content = `
+            <h3>CKD Prevention Guidelines</h3>
+            <ul>
+              <li>Control diabetes and hypertension.</li>
+              <li>Drink adequate water and avoid excessive protein intake.</li>
+              <li>Do not overuse painkillers or antibiotics.</li>
+              <li>Get regular kidney screenings, especially if at risk.</li>
+            </ul>`;
+          break;
+        case 'comparison':
+          content = `
+            <h3>Healthy Individual vs. CKD Patient</h3>
+            <table class="comparison-table">
+              <tr>
+                <th>Parameter</th><th>Healthy Individual</th><th>CKD Patient</th>
+              </tr>
+              <tr><td>Creatinine Level</td><td>0.6–1.2 mg/dL</td><td>Above normal</td></tr>
+              <tr><td>GFR</td><td>Above 90</td><td>Below 60</td></tr>
+              <tr><td>Blood Pressure</td><td>Below 120/80</td><td>Often elevated</td></tr>
+              <tr><td>Urine Protein</td><td>Absent</td><td>Present</td></tr>
+            </table>`;
+          break;
+      }
+
+      infoBox.innerHTML = content;
+      infoBox.style.display = "block";
+    }
+  </script>
+</body>
+</html>

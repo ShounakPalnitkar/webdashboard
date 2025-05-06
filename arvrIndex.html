@@ -142,10 +142,11 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const pastelColors = ['#ADD8E6', '#FFB6C1', '#D8BFD8', '#98FB98']; // Light blue, pink, purple, green
+      const pastelColors = ['#ADD8E6', '#FFB6C1', '#D8BFD8', '#98FB98'];
       const barColors = ['#9b59b6', '#34495e', '#e67e22', '#27ae60', '#16a085'];
       const agePieColors = ['#e74c3c', '#2980b9', '#f1c40f', '#2ecc71', '#9b59b6'];
 
+      // Pie Chart
       Plotly.newPlot('pieChart', [{
         values: [40, 30, 20, 10],
         labels: ['Diabetes', 'Hypertension', 'Glomerulonephritis', 'Others'],
@@ -158,6 +159,7 @@
         showlegend: false
       });
 
+      // Bar Chart
       Plotly.newPlot('barChart', [{
         x: ['High BP', 'Diabetes', 'Obesity', 'Family History', 'Smoking'],
         y: [45, 40, 30, 25, 20],
@@ -171,6 +173,7 @@
         yaxis: { title: 'Risk (%)', range: [0, 50] }
       });
 
+      // Line Chart
       const ageGroups = ['<20', '20-39', '40-59', '60-79', '80+'];
       Plotly.newPlot('lineChart', [
         {
@@ -201,6 +204,7 @@
         margin: { t: 40, b: 100 }
       });
 
+      // Age Chart
       Plotly.newPlot('ageChart', [{
         labels: ['<20', '20-39', '40-59', '60-79', '80+'],
         values: [5, 20, 35, 30, 10],
@@ -251,15 +255,28 @@
           break;
         case 'comparison':
           content = `
-            <h3>Healthy Individual vs. CKD Patient</h3>
+            <h3>Healthy Individual vs CKD Patient</h3>
             <table class="comparison-table">
               <tr>
-                <th>Parameter</th><th>Healthy Individual</th><th>CKD Patient</th>
+                <th>Parameter</th>
+                <th>Healthy Individual</th>
+                <th>CKD Patient</th>
               </tr>
-              <tr><td>Creatinine Level</td><td>0.6–1.2 mg/dL</td><td>Above normal</td></tr>
-              <tr><td>GFR</td><td>Above 90</td><td>Below 60</td></tr>
-              <tr><td>Blood Pressure</td><td>Below 120/80</td><td>Often elevated</td></tr>
-              <tr><td>Urine Protein</td><td>Absent</td><td>Present</td></tr>
+              <tr>
+                <td>GFR</td>
+                <td>≥90</td>
+                <td>&lt;60</td>
+              </tr>
+              <tr>
+                <td>Creatinine Level</td>
+                <td>0.6–1.2 mg/dL</td>
+                <td>Elevated</td>
+              </tr>
+              <tr>
+                <td>Proteinuria</td>
+                <td>&lt;150 mg/day</td>
+                <td>&gt;300 mg/day</td>
+              </tr>
             </table>`;
           break;
       }
